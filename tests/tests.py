@@ -20,11 +20,17 @@ class EventTestCases(TestCase):
                                         )
         self.user.save()
 
-        # create a request
+        # create a request with the IP in META[REMOTE_ADDR]
         self.request = HttpRequest()
         self.request.method = 'GET'
         self.request.user = self.user
         self.request.META['REMOTE_ADDR'] = '127.0.0.1'
+
+        # create a request with the IP in META[HTTP_X_FORWARDED_FOR]
+        self.request2 = HttpRequest()
+        self.request2.method = 'GET'
+        self.request2.user = self.user
+        self.request2.META['HTTP_X_FORWARDED_FOR'] = '127.0.0.1,'
     
     def test_event_model_creation(self):
         tag = "event_model_creation"
@@ -52,7 +58,14 @@ class EventTestCases(TestCase):
     def test_event_triggered_with_everything(self):
         tag = "event_triggered_with_everything"
         events.register(tag, self.request)
+
+        tag2 = "event_triggered_with_everything2"
+        events.register(tag2, self.request2)
+
         fetched_event = EventModel.objects.get(tag=tag)
+        self.assertIsNotNone(fetched_event)
+
+        fetched_event = EventModel.objects.get(tag=tag2)
         self.assertIsNotNone(fetched_event)
     
     def test_event_triggered_without_request(self):
