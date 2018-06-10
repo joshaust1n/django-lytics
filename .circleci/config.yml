@@ -48,7 +48,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            coverage run test_runner.py
+            coverage run --source=djangolytics test_runner.py
             coveralls
             
 
