@@ -48,9 +48,8 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            coverage run test_runner.py
-            coveralls
-
+            python test_runner.py
+            
 
       - store_artifacts:
           path: test-reports
